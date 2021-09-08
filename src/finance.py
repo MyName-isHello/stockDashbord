@@ -11,12 +11,6 @@ class Cash:
 	def update(self,number):
 		self.value = number
 
-class Histor_Trade:
-	def __init__(self):
-		self.TradeList = []
-
-	def update(Trade):
-		self.TradeList.append(Trade)
 
 
 class Agent:
@@ -32,19 +26,21 @@ class Agent:
 		cash.update(cash.getValue()-buyPrice*quantity)
 		return trade
 
-	def sell(self, cash, Trade):
-		pass
+	def sell(self, cash, trade,sellPrice,sellTime,sellQuantity):
+		trade_end = trade.closs_Trade(sellPrice,sellTime,sellQuantity)
+		cash.update(cash.getValue()+sellPrice*sellQuantity)
+		return Trade_END
 
 class Trade:
 	def __init__(self,
 		  trade_id,
-		  dayTime,
+		  buy_day,
 		  symbol,
 		  quantity,
 		  buyPrice):
 		
 		self.trade_id = trade_id
-		self.dayTime  = dayTime # YYYY-MM-DD 
+		self.buy_day  = buy_day # YYYY-MM-DD 
 		self.symbol   = symbol
 		self.quantity = quantity
 		self.buyPrice = buyPrice
@@ -52,3 +48,43 @@ class Trade:
 	def getValue(self, daynow):
 		ticker = yf.download(self.symbol,daynow,daynow)
 		return ticker["Adj Close"]*self.quantity
+
+	def closs_Trade(self,sellPrice,sellTime,sellQuantity):
+			self.quantity = self.quantity - sellQuantity
+			return Trade_END(f"{self.trade_id}_END",
+							 self.buy_day,
+							 sellTime,
+							 self.symbol,
+							 sellQuantity,
+							 self.buyPrice,
+							 sellPrice)
+
+class Trade_END(Trade):
+	def __init__(self,
+		  trade_id,
+		  buy_day,
+		  end_day,
+		  symbol,
+		  quantity,
+		  buyPrice,
+		  sellPrice):
+		super().__init__(
+			trade_id,
+			buy_day,
+			symbol,
+			quantity,
+			buyPrice)
+		self.end_day = end_day
+
+class Account:
+	def __init__(self,cash_start=None):
+		self.Postion = []
+		self.Histor_Trade = []
+		self.PL = 0
+		self.agent = Agent()
+		self.cash = Cash(cash_start)
+
+	def callAgent_buy(self,symbol, quantity, buyPrice, buy_day):
+		self.Postion.append(self.agent.buy(self.cash, symbol, quantity, buyPrice, buy_day))
+
+

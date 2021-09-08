@@ -1,11 +1,16 @@
 import finance as fe
 def main():
-	cash = fe.Cash(5000)
-	print(f"{cash.getValue()}\t| cash work.")
+	amd =fe.Trade("amd_123","2021-4-24","AMD",40,10)
 
-	agent = fe.Agent()
-	amd = agent.buy(cash,"AMD",10,20,"2021-01-08")
-	print(f"{cash.getValue()}\t| cash after agent.buy action")
-	print(f"{amd.getValue('2021-01-08')}\t| amd object")
+	print(f"{amd.quantity}\t| amd_1")
+
+	amdEND = amd.closs_Trade(99,"2021-4-26",2)
+	print(f"{amd.quantity}\t| amd_2")
+	print(f"{amdEND.quantity}\t| amd_3")
+
+
+	myac = fe.Account()
+
+	print(myac.cash.getValue())
 if __name__ == '__main__':
 	main()
