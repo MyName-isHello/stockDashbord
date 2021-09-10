@@ -51,13 +51,16 @@ class Trade:
 
 	def closs_Trade(self,sellPrice,sellTime,sellQuantity):
 			self.quantity = self.quantity - sellQuantity
-			return Trade_END(f"{self.trade_id}_END",
+			return Trade_END(self.trade_id+"_END",
 							 self.buy_day,
 							 sellTime,
 							 self.symbol,
 							 sellQuantity,
 							 self.buyPrice,
 							 sellPrice)
+	def getInfo(self):
+		return f"""|id\t|symbol\t|quantity\t|buyPrice\t|buy_day\t|\n|{self.trade_id}\t|{self.symbol}\t|{self.quantity}\t\t|{self.buyPrice}\t\t|{self.buy_day}\t|
+		"""
 
 class Trade_END(Trade):
 	def __init__(self,
