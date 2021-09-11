@@ -99,7 +99,6 @@ class Trade(Trade_RAW):
 			return item
 
 
-
 class Account:
 	def __init__(self,cash_start=None):
 		self.Postion = []
@@ -107,24 +106,41 @@ class Account:
 		self.PL = 0
 		self.agent = Agent()
 		self.cash = Cash(cash_start)
+	def chkPostion(self):
+		""" check the postion if it quantity is 0 then delete it """
+		for trade in self.Postion:
+			if trade.quantity == 0:
+				self.Postion.remove(trade)
 
 	def callAgent_buy(self,symbol, quantity, buyPrice, buy_day):
 		item = self.agent.buy(self.cash, symbol, quantity, buyPrice, buy_day)
 	
 		self.Postion.append(item)
 
-
 	def callAgent_sell(self,trade,sellPrice,sellTime,sellQuantity):
 		item = self.agent.sell(self.cash, trade,sellPrice,sellTime,sellQuantity)
-
 		self.Histor_Trade.append(item)
+		self.chkPostion()
 
 	def showPosition(self):
-		msg = "|id\t|symbol\t|   quantity\t|   buyPrice\t|buy_day\t|"
-		for trade in self.Postion:
-			msg += trade.getInfo()
-		return msg
 
+		tempDic = {}
+		for trade in self.Postion:
+			try:
+				tempDic[trade.symbol].append(trade)
+			except KeyError:
+				tempDic.update({trade.symbol:[trade]})
+
+		msg = "|symbol\t|quantity\t|avgCost\t|"
+		for key, value in tempDic.items():
+			# 	     |symbol\t|   quantity\t|   buyPrice\t|
+
+			sumQuantity = sum(map(lambda x : x.quantity,value))
+			avgCost = sum(map(lambda x :x.quantity*x.buyPrice,value))/sumQuantity
+			
+			msg += f"\n|{key}\t|{sumQuantity}\t\t|{avgCost}\t\t|"
+
+		return msg
 	def showHistor_Trade(self):
 		msg = "|id\t|symbol\t|   quantity\t|   buyPrice\t|buy_day\t| end_day\t|sellPrice|"
 		for trade in self.Histor_Trade:
