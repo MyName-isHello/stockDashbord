@@ -29,9 +29,10 @@ class Agent:
 	def sell(self, cash, trade,sellPrice,sellTime,sellQuantity):
 		trade_end = trade.closs_Trade(sellPrice,sellTime,sellQuantity)
 		cash.update(cash.getValue()+sellPrice*sellQuantity)
-		return Trade_END
+		return trade_end
 
-class Trade:
+
+class Trade_RAW:
 	def __init__(self,
 		  trade_id,
 		  buy_day,
@@ -48,20 +49,10 @@ class Trade:
 	def getValue(self, daynow):
 		ticker = yf.download(self.symbol,daynow,daynow)
 		return ticker["Adj Close"]*self.quantity
-
-	def closs_Trade(self,sellPrice,sellTime,sellQuantity):
-			self.quantity = self.quantity - sellQuantity
-			return Trade_END(f"{self.trade_id}_END",
-							 self.buy_day,
-							 sellTime,
-							 self.symbol,
-							 sellQuantity,
-							 self.buyPrice,
-							 sellPrice)
 	def getInfo(self):
 		return f"""\n|{self.trade_id}\t|{self.symbol}\t|\t{self.quantity}\t|\t{self.buyPrice}\t|{self.buy_day}\t|"""
 
-class Trade_END(Trade):
+class Trade_END(Trade_RAW):
 	def __init__(self,
 		  trade_id,
 		  buy_day,
@@ -70,17 +61,44 @@ class Trade_END(Trade):
 		  quantity,
 		  buyPrice,
 		  sellPrice):
+		self.end_day = end_day
+		self.sellPrice = sellPrice
 		super().__init__(
 			trade_id,
 			buy_day,
 			symbol,
 			quantity,
 			buyPrice)
-		self.end_day = end_day
-		self.sellPrice = sellPrice
 
 	def getInfo(self):
 		return f"{super().getInfo()}{self.end_day}\t|  {self.sellPrice}\t|"
+
+class Trade(Trade_RAW):
+	def __init__(self,
+		  trade_id,
+		  buy_day,
+		  symbol,
+		  quantity,
+		  buyPrice):
+		super().__init__(
+			trade_id,
+			buy_day,
+			symbol,
+			quantity,
+		  	buyPrice
+		)
+	def closs_Trade(self,sellPrice,sellTime,sellQuantity):
+			self.quantity = self.quantity - sellQuantity
+			item = Trade_END(f"{self.trade_id}_END",
+							 self.buy_day,
+							 sellTime,
+							 self.symbol,
+							 sellQuantity,
+							 self.buyPrice,
+							 sellPrice)
+			return item
+
+
 
 class Account:
 	def __init__(self,cash_start=None):
@@ -91,20 +109,24 @@ class Account:
 		self.cash = Cash(cash_start)
 
 	def callAgent_buy(self,symbol, quantity, buyPrice, buy_day):
-		self.Postion.append(self.agent.buy(self.cash, symbol, quantity, buyPrice, buy_day))
+		item = self.agent.buy(self.cash, symbol, quantity, buyPrice, buy_day)
+	
+		self.Postion.append(item)
 
 
 	def callAgent_sell(self,trade,sellPrice,sellTime,sellQuantity):
-		self.Histor_Trade.append(self.agent.sell(self.cash, trade,sellPrice,sellTime,sellQuantity))
+		item = self.agent.sell(self.cash, trade,sellPrice,sellTime,sellQuantity)
+
+		self.Histor_Trade.append(item)
 
 	def showPosition(self):
-		msg = "|id\t|symbol\t|   quantity\t|   buyPrice\t|buy_day\t|\n"
+		msg = "|id\t|symbol\t|   quantity\t|   buyPrice\t|buy_day\t|"
 		for trade in self.Postion:
 			msg += trade.getInfo()
 		return msg
 
 	def showHistor_Trade(self):
-		msg = "|id\t|symbol\t|   quantity\t|   buyPrice\t|buy_day\t| end_day\t|sellPrice|\n"
+		msg = "|id\t|symbol\t|   quantity\t|   buyPrice\t|buy_day\t| end_day\t|sellPrice|"
 		for trade in self.Histor_Trade:
 			msg += trade.getInfo()
 		return msg
