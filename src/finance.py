@@ -1,4 +1,5 @@
 import yfinance as yf
+import gentleRequest as gR
 
 class Cash:
 	def __init__(self, number=None):
