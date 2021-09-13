@@ -1,4 +1,6 @@
 import finance as fe
+import kivy
+from kivy.app import App
 def main():
 	myac = fe.Account(5000)
 
@@ -10,7 +12,11 @@ def main():
 	myac.callAgent_sell(myac.Postion[1],9,"2021-4-20",3)
 
 
-	print(myac.showPosition())
+#	print(myac.showPosition())
+
+#	print(myac.gentleRequest.gentle_get("fff"))
+	print("T$"*50)
+
 if __name__ == '__main__':
 	main()
 """

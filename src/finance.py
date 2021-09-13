@@ -107,6 +107,7 @@ class Account:
 		self.PL = 0
 		self.agent = Agent()
 		self.cash = Cash(cash_start)
+		self.gentleRequest = gR.gentleRequest()
 	def chkPostion(self):
 		""" check the postion if it quantity is 0 then delete it """
 		for trade in self.Postion:
@@ -117,11 +118,17 @@ class Account:
 		item = self.agent.buy(self.cash, symbol, quantity, buyPrice, buy_day)
 	
 		self.Postion.append(item)
+		self.gentleUpdate()
 
 	def callAgent_sell(self,trade,sellPrice,sellTime,sellQuantity):
 		item = self.agent.sell(self.cash, trade,sellPrice,sellTime,sellQuantity)
 		self.Histor_Trade.append(item)
 		self.chkPostion()
+		self.gentleUpdate()
+		
+	def gentleUpdate(self):
+		self.gentleRequest.update({"Postion":self.Postion,
+								   "Histor_Trade":self.Histor_Trade})
 
 	def showPosition(self):
 
