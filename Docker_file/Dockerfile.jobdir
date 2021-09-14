@@ -1,0 +1,4 @@
+FROM ubuntu/basic 
+COPY . /app
+WORKDIR /app
+RUN apt-get update -y

@@ -1,13 +1,11 @@
-FROM ubuntu:20.04
-COPY . /app
-WORKDIR /app
-RUN apt-get update -y
-RUN apt-get install python3.9 -y
-RUN apt-get install python3-pip -y
+FROM python_env 
+RUN apt install software-properties-common -y
+RUN apt update
 RUN apt-get install build-essential -y  
 RUN apt-get install git -y
-RUN apt-get install python3 -y 
 RUN apt-get install python3-dev -y 
+
+
 
 RUN apt-get install libsdl2-dev -y
 RUN apt-get install libsdl2-image-dev -y 
@@ -23,8 +21,11 @@ RUN apt-get install zlib1g-dev -y
 RUN apt-get install libgstreamer1.0 -y
 RUN apt-get install gstreamer1.0-plugins-base -y
 RUN apt-get install gstreamer1.0-plugins-good -y
+RUN apt-get install libmtdev-dev -y
 
-RUN pip3 install cython
+RUN pip3 install Cython
+RUN pip3 install kivy
 
-RUN pip install -r requirements.txt
 RUN apt-get install firefox -y
+RUN pip3 install yfinance
+

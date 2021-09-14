@@ -1,29 +1,17 @@
 FROM ubuntu:20.04
-RUN apt-get update && apt-get install -y x11-apps
-RUN rm -rf /tmp/* /usr/share/doc/* /usr/share/info/* /var/tmp/*
-RUN useradd -ms /bin/bash user
-ENV DISPLAY :0
-#USER user
-USER root
-
-
-
-
-
-
-
-
 COPY . /app
 WORKDIR /app
 RUN apt-get update -y
+
+RUN apt-get install -y x11-apps
+ENV DISPLAY :0
+
 RUN apt-get install python3.9 -y
 RUN apt-get install python3-pip -y
 RUN apt-get install build-essential -y  
 RUN apt-get install git -y
 RUN apt-get install python3 -y 
 RUN apt-get install python3-dev -y 
-
-
 
 RUN apt-get install libsdl2-dev -y
 RUN apt-get install libsdl2-image-dev -y 
@@ -44,7 +32,3 @@ RUN pip3 install cython
 
 RUN pip install -r requirements.txt
 RUN apt-get install firefox -y
-
-
-USER user
-
